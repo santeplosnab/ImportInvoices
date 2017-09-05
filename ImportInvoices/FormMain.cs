@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿using ImportInvoices.Dispatches;
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data.OleDb;
 
 namespace ImportInvoices
 {
@@ -19,28 +12,59 @@ namespace ImportInvoices
             InitializeComponent();
         }
 
-        private void linkLabelSelectFiles_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        /// <summary>
+        /// Открывает диалог выбора xls файла
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonOpenFile_Click(object sender, System.EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
+            // Initializes a OpenFileDialog instance 
+            using (OpenFileDialog openfileDialog = new OpenFileDialog())
+            {
+                openfileDialog.RestoreDirectory = true;
+                openfileDialog.Filter = "Excel files(*.xlsx;*.xls)|*.xlsx;*.xls";
 
-            dialog.InitialDirectory = "C:\\";
-            dialog.Filter = "xls files (*.xls)|*.xls|xlsx files (*.xlsx)|*.xlsx";
-            dialog.FilterIndex = 2;
-            dialog.RestoreDirectory = true;
-            dialog.Multiselect = true;
-
-            if(dialog.ShowDialog() == DialogResult.OK){
-                try
+                if (openfileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Ошибка загрузки. Подробности: " + ex.Message);
+                    textBoxFilePath.Text = openfileDialog.FileName;
                 }
             }
 
+        }
+
+        /// <summary>
+        /// Конвертирует выбранный Excell файл в xml и определяет тип документа
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void buttonCreateDocs_Click(object sender, System.EventArgs e)
+        {
+            textBoxXmlView.Clear();
+
+            string excelFileName = textBoxFilePath.Text;
             
+            if (string.IsNullOrEmpty(excelFileName) || !File.Exists(excelFileName))
+            {
+                MessageBox.Show($"По указанному пути {excelFileName} файла не существует");
+                return;
+            }
+
+            try
+            {
+                string xmlFormatString = new ConvertExcelToXML().GetXML(excelFileName);
+
+                if (string.IsNullOrEmpty(xmlFormatString))
+                {
+                    MessageBox.Show($"Файл {excelFileName} не содержит данных для импорта");
+                }
+
+                textBoxXmlView.Text = xmlFormatString;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка импорта! Подробности: {ex.Message}");
+            }
         }
     }
 }

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DocumentFormat.OpenXml.Packaging;
+﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace ImportInvoices.Dispatches
@@ -86,7 +84,7 @@ namespace ImportInvoices.Dispatches
                     }
                 }
                 // Удаляем строку заголовка
-                dt.Rows.RemoveAt(0);
+               // dt.Rows.RemoveAt(0);
                 return dt;
             }
             catch (IOException ex)
@@ -100,7 +98,7 @@ namespace ImportInvoices.Dispatches
         /// </summary>
         /// <param name="spreadsheetDocument"></param>
         /// <param name="cell">Объект cell</param>
-        /// <returns></returns>
+        /// <returns>Значение в ячейке</returns>
         private static string GetValueOfCell(SpreadsheetDocument spreadsheetDocument, Cell cell)
         {
             // Получение значения в ячейке
@@ -159,6 +157,20 @@ namespace ImportInvoices.Dispatches
             Regex regex = new Regex("[A-Za-z]+");
             Match match = regex.Match(cellReference);
             return match.Value;
+        }
+
+        /// <summary>
+        /// Конвертирует DataTable в Xml
+        /// </summary>
+        /// <param name="fileName">Путь к xls файлу</param>
+        /// <returns>XML строка</returns>
+        public string GetXML(string fileName)
+        {
+            using (DataSet ds = new DataSet())
+            {
+                ds.Tables.Add(this.ReadExcelFile(fileName));
+                return ds.GetXml();
+            }
         }
     }
 }
