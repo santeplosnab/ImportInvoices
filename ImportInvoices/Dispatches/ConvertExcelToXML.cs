@@ -37,13 +37,13 @@ namespace ImportInvoices.Dispatches
 
             if (Path.GetExtension(filePath).Equals(".xls"))
             {
-                strConn = String.Format("Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0};Extended Properties=\"Excel 8.0;HDR=Yes;IMEX=2\"", 
-                    filePath);
+                strConn = $"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={filePath};" +
+                    $"Extended Properties=\"Excel 8.0;HDR=Yes;IMEX=2\"";
             }
             else if (Path.GetExtension(filePath).Equals(".xlsx"))
             {
-                strConn = String.Format("Provider=Microsoft.Ace.OLEDB.12.0;Data Source={0};Extended Properties=\"Excel 12.0;HDR=Yes;IMEX=1\"", 
-                    filePath);
+                strConn = $"Provider=Microsoft.Ace.OLEDB.12.0;Data Source={filePath};" +
+                    $"Extended Properties=\"Excel 12.0;HDR=Yes;IMEX=1\"";
             }
             else
             {
